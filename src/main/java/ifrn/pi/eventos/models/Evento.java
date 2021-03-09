@@ -5,8 +5,9 @@ public class Evento {
 	private String nome;
 	private String local;
 	private String data;
+	private String horario;
 
-	public String getNome() {
+	public String getNome() { 
 		return nome;
 	}
 
@@ -38,5 +39,5 @@ public class Evento {
 		this.horario = horario;
 	}
 
-	private String horario;
+	
 }
