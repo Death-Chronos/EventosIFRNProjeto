@@ -9,15 +9,13 @@ import javax.persistence.Id;
 public class Evento {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy =GenerationType.IDENTITY )
 	private Long id;
 	private String nome;
 	private String local;
 	private String data;
 	private String horario;
 	
-	
-
 	public Long getId() {
 		return id;
 	}
