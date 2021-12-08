@@ -16,7 +16,8 @@
 	<div class="container">
 
 		<h1>Lista de eventos</h1>
-
+		
+	<p th:if="${mensagem}" th:text="${mensagem }"> </p>
 		<table class="highlight">
 
 			<thead>
@@ -38,7 +39,7 @@
 					<td><a th:href="@{/eventos/{id}(id=${e.id})}"><span
 							th:text="${e.nome}">link</span> </a></td>
 					<td th:text="${e.local}"></td>
-					<td th:text="${e.data}"></td>
+					<td th:text="${#temporals.format(e.data)}"></td>
 					<td th:text="${e.horario}"></td>
 					<td>
 					<a th:href="@{/eventos/{id}/selecionar(id=${e.id})}"> <i class="material-icons">edit</i></a>
