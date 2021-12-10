@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,7 @@ public class EventosController {
 	}
 
 	@PostMapping
-	public String salvar(@Valid Evento evento, BindingResult result, RedirectAttributes at) {
+	public String salvar(@Valid Evento evento, BindingResult result, RedirectAttributes atributo) {
 		
 		if (result.hasErrors()) {
 			return form(evento);
@@ -45,7 +44,7 @@ public class EventosController {
 		System.out.println(evento);
 		er.save(evento);
 		
-		at.addFlashAttribute("mensagem", "Evento salvo com sucesso.");
+		atributo.addFlashAttribute("mensagem", "Evento salvo com sucesso.");
 
 		return "redirect:/eventos";
 	}
@@ -79,7 +78,7 @@ public class EventosController {
 	}
 	
 	@PostMapping("/{idEvento}")
-	public ModelAndView savarConvidado(@PathVariable Long idEvento, @Valid Convidado convidado, BindingResult result, RedirectAttributes at) {
+	public ModelAndView savarConvidado(@PathVariable Long idEvento, @Valid Convidado convidado, BindingResult result, RedirectAttributes atributo) {
 		ModelAndView md= new ModelAndView();
 		
 		
@@ -97,12 +96,12 @@ public class EventosController {
 			md.setViewName("redirect:/eventos");
 			return md;
 		}
-		at.addFlashAttribute("mensagem", "convidado salvo com sucesso.");
+		atributo.addFlashAttribute("mensagem", "convidado salvo com sucesso.");
 		
-		Evento evento =opt.get();
-		convidado.setEvento(evento);
+		
+		convidado.setEvento(opt.get());
 		cr.save(convidado);
-		md.addObject("evento", evento);
+		md.addObject("evento", opt.get());
 		md.setViewName("redirect:/eventos/{idEvento}");
 		
 		
@@ -157,7 +156,7 @@ public class EventosController {
 		}
 	
 	@GetMapping("/{id}/remover")
-	public String apagarEvento(@PathVariable Long id, RedirectAttributes at) {
+	public String apagarEvento(@PathVariable Long id, RedirectAttributes atributo) {
 		
 		Optional<Evento> opt = er.findById(id);
 		
@@ -171,21 +170,29 @@ public class EventosController {
 			
 			er.delete(evento);
 			
-			at.addFlashAttribute("mensagem", "Evento removido com sucesso.");
+			atributo.addFlashAttribute("mensagem", "Evento removido com sucesso.");
 		}
 		return "redirect:/eventos";
 	}
 	@GetMapping("/{idEvento}/convidados/{idConvidado}/remover")
-	public String apagarConvidado(@PathVariable Long idEvento, @PathVariable Long idConvidado, RedirectAttributes at) {
+	public String apagarConvidado(@PathVariable Long idEvento, @PathVariable Long idConvidado, RedirectAttributes atributo) {
 		
+		Optional<Evento> optE= er.findById(idEvento);
 		Optional<Convidado> opt = cr.findById(idConvidado);
-		if(!opt.isEmpty()) {
-			cr.delete(opt.get());
+		if (!optE.isEmpty()) {
+			if(!opt.isEmpty()) {
+				cr.delete(opt.get());
+				atributo.addFlashAttribute("mensagem", "Convidado removido com sucesso.");
+				return "redirect:/eventos/{idEvento}";
+			
 		}
-		at.addFlashAttribute("mensagem", "Convidado removido com sucesso.");
+		}
+		atributo.addFlashAttribute("mensagem", "Erro na remoção.");
 		
 		
-		return "redirect:/eventos/{idEvento}";
+		
+		
+		return "redirect:/eventos";
 	}
 
 }
