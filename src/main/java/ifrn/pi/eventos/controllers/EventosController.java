@@ -35,7 +35,7 @@ public class EventosController {
 	}
 
 	@PostMapping
-	public String salvar(@Valid Evento evento, BindingResult result, RedirectAttributes at) {
+	public String salvar(@Valid Evento evento, BindingResult result, RedirectAttributes attributes) {
 		
 		if (result.hasErrors()) {
 			return form(evento);
@@ -44,7 +44,7 @@ public class EventosController {
 		System.out.println(evento);
 		er.save(evento);
 		
-		at.addFlashAttribute("mensagem", "Evento salvo com sucesso.");
+		attributes.addFlashAttribute("mensagem", "Evento salvo com sucesso.");
 
 		return "redirect:/eventos";
 	}
@@ -78,7 +78,7 @@ public class EventosController {
 	}
 	
 	@PostMapping("/{idEvento}")
-	public ModelAndView savarConvidado(@PathVariable Long idEvento, @Valid Convidado convidado, BindingResult result, RedirectAttributes at) {
+	public ModelAndView savarConvidado(@PathVariable Long idEvento, @Valid Convidado convidado, BindingResult result, RedirectAttributes attributes) {
 		ModelAndView md= new ModelAndView();
 		
 		
@@ -96,7 +96,7 @@ public class EventosController {
 			md.setViewName("redirect:/eventos");
 			return md;
 		}
-		at.addFlashAttribute("mensagem", "convidado salvo com sucesso.");
+		attributes.addFlashAttribute("mensagem", "convidado salvo com sucesso.");
 		
 		
 		convidado.setEvento(opt.get());
@@ -156,7 +156,7 @@ public class EventosController {
 		}
 	
 	@GetMapping("/{id}/remover")
-	public String apagarEvento(@PathVariable Long id, RedirectAttributes at) {
+	public String apagarEvento(@PathVariable Long id, RedirectAttributes attributes) {
 		
 		Optional<Evento> opt = er.findById(id);
 		
@@ -167,32 +167,32 @@ public class EventosController {
 			List<Convidado> convidados = cr.findByEvento(evento);
 			
 			cr.deleteAll(convidados);
-			
 			er.delete(evento);
 			
-			at.addFlashAttribute("mensagem", "Evento removido com sucesso.");
+			attributes.addFlashAttribute("mensagem", "Evento removido com sucesso.");
 		}
 		return "redirect:/eventos";
 	}
 	@GetMapping("/{idEvento}/convidados/{idConvidado}/remover")
-	public String apagarConvidado(@PathVariable Long idEvento, @PathVariable Long idConvidado, RedirectAttributes at) {
+	public String apagarConvidado(@PathVariable Long idEvento, @PathVariable Long idConvidado, RedirectAttributes attributes) {
 		
 		Optional<Evento> optE= er.findById(idEvento);
 		Optional<Convidado> opt = cr.findById(idConvidado);
+		
 		if (!optE.isEmpty()) {
 			if(!opt.isEmpty()) {
 				cr.delete(opt.get());
-				at.addFlashAttribute("mensagem", "Convidado removido com sucesso.");
-				return "redirect:/eventos/{idEvento}";
+				attributes.addFlashAttribute("mensagem", "Convidado removido com sucesso.");
+				
 			
 		}
 		}
+		return "redirect:/eventos/{idEvento}";
 		
 		
 		
 		
-		at.addFlashAttribute("mensagem", "Erro na remoção.");
-		return "redirect:/eventos";
+
 	}
 
 }
